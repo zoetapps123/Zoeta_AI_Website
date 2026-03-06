@@ -67,7 +67,7 @@ export default function Hero() {
           initial={{ opacity: 0, letterSpacing: "0.1em" }}
           animate={{ opacity: 1, letterSpacing: "0.5em" }}
           transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
-          className="font-mono text-[10px] md:text-[11px] text-cyan-400/70 uppercase mb-10 md:mb-14 tracking-[0.5em]"
+          className="font-mono text-[9px] md:text-[11px] text-cyan-400/70 uppercase mb-8 md:mb-14 tracking-[0.3em] md:tracking-[0.5em]"
         >
           Agentic Automation Studio
         </motion.p>
@@ -76,12 +76,12 @@ export default function Hero() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, delay: 0.5, ease: EASE }}
-          className="relative mb-10 md:mb-14"
+          className="relative mb-8 md:mb-14"
           onClick={triggerGlitch}
         >
           <h1
             className="font-display font-bold leading-none select-none relative inline-block text-white"
-            style={{ fontSize: "clamp(5rem, 18vw, 16rem)", letterSpacing: "-0.04em" }}
+            style={{ fontSize: "clamp(3.5rem, 18vw, 16rem)", letterSpacing: "-0.04em" }}
           >
             <span className="relative z-10">
               ZOETA
@@ -132,24 +132,23 @@ export default function Hero() {
           />
         </motion.div>
 
-        <motion.blockquote
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.0, ease: EASE }}
-          className="max-w-2xl mx-auto mb-6"
+          className="max-w-xl mx-auto mb-6"
         >
-          <p className="font-display font-light text-lg md:text-xl lg:text-2xl text-white/70 leading-[1.6] tracking-[-0.01em]">
-            &ldquo;We engineer AI systems that deliver
-            <span className="text-cyan-400 font-normal"> measurable ROI</span>
-            ;not promises.&rdquo;
+          <p className="font-display font-medium text-sm sm:text-base md:text-lg text-white/50 leading-[1.7] tracking-[0.04em] uppercase">
+            AI that ships.{" "}
+            <span className="text-gradient-cyan font-semibold">Results that compound.</span>
           </p>
-        </motion.blockquote>
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 1.3, ease: EASE }}
-          className="font-display text-sm md:text-base text-white/40 tracking-wide mb-14"
+          className="font-display text-xs sm:text-sm md:text-base text-white/40 tracking-wide mb-10 md:mb-14"
         >
           AI Agents &nbsp;&middot;&nbsp; Premium Websites &nbsp;&middot;&nbsp; Custom Workflows
         </motion.p>

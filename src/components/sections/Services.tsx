@@ -102,7 +102,7 @@ function ServiceBlock({ service, index }: { service: (typeof services)[0]; index
         <div
           className={`relative flex items-center ${
             isEven ? "order-2 lg:pl-16 xl:pl-24" : "order-2 lg:order-1 lg:pr-16 xl:pr-24"
-          } px-8 md:px-12 py-16 lg:py-0`}
+          } px-6 sm:px-8 md:px-12 py-12 sm:py-16 lg:py-0`}
         >
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -115,7 +115,7 @@ function ServiceBlock({ service, index }: { service: (typeof services)[0]; index
               <div className="w-16 h-px bg-gradient-to-r from-cyan-400/30 to-transparent" />
             </div>
 
-            <h3 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl tracking-[-0.03em] leading-[1.05] mb-3 text-white">
+            <h3 className="font-display font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl tracking-[-0.03em] leading-[1.05] mb-3 text-white">
               {service.title}
             </h3>
 
@@ -156,7 +156,7 @@ export default function Services() {
             <p className="font-mono text-[10px] tracking-[0.4em] text-cyan-400/50 uppercase mb-5">
               What We Build
             </p>
-            <h2 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-[-0.03em] leading-[1.05] text-white">
+            <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-[-0.03em] leading-[1.05] text-white">
               Four Pillars of
               <br />
               <span className="text-gradient-cyan">Execution</span>

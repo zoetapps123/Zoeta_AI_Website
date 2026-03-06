@@ -100,7 +100,7 @@ export default function ContactForm() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.8, delay: 0.2, ease: EASE_CINEMATIC }}
               onSubmit={handleSubmit}
-              className="rounded-2xl p-8 md:p-12 border border-white/10"
+              className="rounded-2xl p-6 sm:p-8 md:p-12 border border-white/10"
               style={{
                 background: "rgba(255, 255, 255, 0.04)",
                 backdropFilter: "blur(12px)",
@@ -190,7 +190,7 @@ export default function ContactForm() {
                 <p className="font-display text-sm text-red-400 mb-4">{error}</p>
               )}
 
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
                 <p className="font-mono text-xs text-white/30">
                   We&apos;ll respond within 24 hours
                 </p>

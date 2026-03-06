@@ -76,7 +76,7 @@ export default function FeaturedWork() {
             <p className="font-mono text-[10px] tracking-[0.4em] text-cyan-400/50 uppercase mb-5">
               Featured Work
             </p>
-            <h2 className="font-display font-bold text-3xl md:text-5xl lg:text-6xl tracking-[-0.03em] text-white">
+            <h2 className="font-display font-bold text-2xl sm:text-3xl md:text-5xl lg:text-6xl tracking-[-0.03em] text-white">
               Results That
               <br />
               <span className="text-gradient-cyan">Speak Volumes</span>
@@ -122,7 +122,7 @@ export default function FeaturedWork() {
                 </div>
 
                 {/* Right: Content */}
-                <div className="lg:col-span-8 p-8 md:p-10 flex flex-col justify-center">
+                <div className="lg:col-span-8 p-6 sm:p-8 md:p-10 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-4">
                     <h3 className="font-display font-bold text-xl md:text-2xl tracking-[-0.02em] text-white">
                       {project.client}

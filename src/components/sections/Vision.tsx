@@ -283,7 +283,7 @@ export default function Vision() {
 
         {/* ===== EARTH ===== */}
         <div className="earth absolute bottom-[-10%] left-1/2 -translate-x-1/2 z-10">
-          <div className="relative w-[400px] h-[400px] md:w-[550px] md:h-[550px]">
+          <div className="relative w-[280px] h-[280px] sm:w-[400px] sm:h-[400px] md:w-[550px] md:h-[550px]">
             <div className="absolute inset-0 rounded-full overflow-hidden" style={{
               background: "radial-gradient(circle at 40% 35%, #4a6cf7 0%, #2d4a8c 25%, #1a2d5e 50%, #0d1633 80%, #050510 100%)",
               boxShadow: "0 0 100px rgba(99,102,241,0.2), inset 0 0 60px rgba(99,102,241,0.1)",
@@ -393,7 +393,7 @@ export default function Vision() {
         {/* ===== MOON ===== */}
         <div className="moon absolute top-[8%] left-1/2 -translate-x-1/2 z-10 opacity-0">
           <div className="relative">
-            <div className="w-[300px] h-[300px] md:w-[420px] md:h-[420px] rounded-full" style={{
+            <div className="w-[220px] h-[220px] sm:w-[300px] sm:h-[300px] md:w-[420px] md:h-[420px] rounded-full" style={{
               background: "radial-gradient(circle at 35% 30%, #e8e4dc 0%, #c4c0b8 15%, #a09c94 35%, #787470 55%, #504c48 75%, #343230 100%)",
               boxShadow: "0 0 120px rgba(220,215,200,0.1), inset -30px -20px 60px rgba(0,0,0,0.4)",
             }}>

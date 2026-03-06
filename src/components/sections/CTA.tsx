@@ -65,7 +65,7 @@ export default function CTA() {
       <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] rounded-full bg-pink-500/[0.06] blur-[80px]" />
 
       <div className="relative z-10 text-center max-w-4xl mx-auto">
-        <p className="cta-line font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-[-0.03em] leading-[1.1] mb-6 text-white">
+        <p className="cta-line font-display font-bold text-2xl sm:text-3xl md:text-5xl lg:text-6xl tracking-[-0.03em] leading-[1.1] mb-6 text-white">
           Ready to stop guessing
           <br />
           and start scaling?

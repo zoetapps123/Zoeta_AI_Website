@@ -110,7 +110,7 @@ export default function About() {
             transition={{ duration: 0.8, delay: 0.2, ease: EASE_CINEMATIC }}
             className="lg:col-span-3"
           >
-            <h2 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl tracking-[-0.03em] mb-2 leading-[0.95] text-white">
+            <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-[-0.03em] mb-2 leading-[0.95] text-white">
               Piyush Pratap
               <br />
               <span className="text-gradient-cyan">Singh</span>
@@ -125,12 +125,11 @@ export default function About() {
                 agentic automation.
               </p>
               <p>
-                Previously Co-founded{" "}
-                <span className="text-white/80 font-medium">MyMirro</span> — an
-                AI fashion-tech company where he launched 3 paying products and
-                led the company to a{" "}
+                Previously Co-founded a{" "}
+                <span className="text-white/80 font-medium">B2B AI tech SaaS startup</span> where
+                he launched 3 paying products and led the company to a{" "}
                 <span className="text-cyan-400 font-medium">
-                  $120K USD acquisition
+                  6-figure USD exit
                 </span>{" "}
                 as a white-labeled solution.
               </p>
@@ -141,14 +140,14 @@ export default function About() {
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/10">
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 mt-10 sm:mt-12 pt-8 border-t border-white/10">
               {[
                 { value: "5+", label: "Years in AI" },
-                { value: "$120K", label: "Exit Value" },
+                { value: "$100K+", label: "Lifetime Sales" },
                 { value: "2x", label: "Founder" },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <p className="font-display font-bold text-2xl md:text-3xl text-gradient-cyan tracking-[-0.02em]">
+                  <p className="font-display font-bold text-xl sm:text-2xl md:text-3xl text-gradient-cyan tracking-[-0.02em]">
                     {stat.value}
                   </p>
                   <p className="font-display text-xs text-white/30 mt-1 tracking-wider uppercase">
