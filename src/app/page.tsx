@@ -1,9 +1,11 @@
+import dynamic from "next/dynamic";
 import Hero from "@/components/sections/Hero";
 import Services from "@/components/sections/Services";
-import Vision from "@/components/sections/Vision";
-import FeaturedWork from "@/components/sections/FeaturedWork";
-import About from "@/components/sections/About";
-import ContactForm from "@/components/sections/ContactForm";
+
+const Vision = dynamic(() => import("@/components/sections/Vision"), { ssr: false });
+const FeaturedWork = dynamic(() => import("@/components/sections/FeaturedWork"));
+const About = dynamic(() => import("@/components/sections/About"));
+const ContactForm = dynamic(() => import("@/components/sections/ContactForm"));
 import Footer from "@/components/sections/Footer";
 
 export default function Home() {

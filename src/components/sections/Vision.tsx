@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -18,6 +18,11 @@ const visionGoals = [
 export default function Vision() {
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
 
   useGSAP(
     () => {
@@ -258,7 +263,7 @@ export default function Vision() {
 
         {/* ===== STAR LAYERS ===== */}
         <div className="stars-far absolute inset-0" style={{ top: "-30%" }}>
-          {Array.from({ length: 150 }).map((_, i) => (
+          {Array.from({ length: isMobile ? 40 : 150 }).map((_, i) => (
             <div key={`sf${i}`} className="absolute rounded-full" style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 180}%`,
@@ -270,7 +275,7 @@ export default function Vision() {
           ))}
         </div>
         <div className="stars-near absolute inset-0" style={{ top: "-40%" }}>
-          {Array.from({ length: 80 }).map((_, i) => (
+          {Array.from({ length: isMobile ? 20 : 80 }).map((_, i) => (
             <div key={`sn${i}`} className="absolute rounded-full bg-white" style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 200}%`,
@@ -363,7 +368,7 @@ export default function Vision() {
 
         {/* ===== DEBRIS ===== */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-18">
-          {Array.from({ length: 20 }).map((_, i) => (
+          {Array.from({ length: isMobile ? 8 : 20 }).map((_, i) => (
             <div key={i} className="debris absolute opacity-0" style={{
               width: `${8 + Math.random() * 14}px`,
               height: `${6 + Math.random() * 10}px`,

@@ -7,12 +7,22 @@ import MagneticButton from "@/components/animations/MagneticButton";
 
 const ParticleCanvas = dynamic(() => import("./HeroParticles"), {
   ssr: false,
+  loading: () => null,
 });
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+  return isMobile;
+}
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const isMobile = useIsMobile();
   const [glitch, setGlitch] = useState(false);
   const [glitchOffset, setGlitchOffset] = useState({ x: 0, y: 0 });
 
@@ -45,13 +55,13 @@ export default function Hero() {
       className="relative h-screen flex items-center justify-center overflow-hidden"
       style={{ background: "#0B0F19" }}
     >
-      <ParticleCanvas />
+      {!isMobile && <ParticleCanvas />}
 
-      {/* Colorful gradient orbs */}
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-600/20 blur-[120px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-purple-600/15 blur-[120px]" />
-      <div className="absolute top-[30%] right-[10%] w-[300px] h-[300px] rounded-full bg-pink-500/10 blur-[100px]" />
-      <div className="absolute bottom-[20%] left-[15%] w-[250px] h-[250px] rounded-full bg-orange-500/8 blur-[80px]" />
+      {/* Colorful gradient orbs — reduced blur on mobile for GPU performance */}
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-600/20 blur-[60px] md:blur-[120px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-purple-600/15 blur-[60px] md:blur-[120px]" />
+      <div className="absolute top-[30%] right-[10%] w-[300px] h-[300px] rounded-full bg-pink-500/10 blur-[50px] md:blur-[100px]" />
+      <div className="absolute bottom-[20%] left-[15%] w-[250px] h-[250px] rounded-full bg-orange-500/8 blur-[40px] md:blur-[80px]" />
 
       {/* Subtle vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(11,15,25,0.5)_70%)] z-10" />
@@ -66,7 +76,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, letterSpacing: "0.1em" }}
           animate={{ opacity: 1, letterSpacing: "0.5em" }}
-          transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
+          transition={{ duration: isMobile ? 0.6 : 1.2, delay: isMobile ? 0.1 : 0.3, ease: EASE }}
           className="font-mono text-[9px] md:text-[11px] text-cyan-400/70 uppercase mb-8 md:mb-14 tracking-[0.3em] md:tracking-[0.5em]"
         >
           Agentic Automation Studio
@@ -75,7 +85,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, delay: 0.5, ease: EASE }}
+          transition={{ duration: isMobile ? 0.6 : 1.2, delay: isMobile ? 0.15 : 0.5, ease: EASE }}
           className="relative mb-8 md:mb-14"
           onClick={triggerGlitch}
         >
@@ -135,7 +145,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.0, ease: EASE }}
+          transition={{ duration: isMobile ? 0.5 : 0.8, delay: isMobile ? 0.25 : 1.0, ease: EASE }}
           className="max-w-xl mx-auto mb-6"
         >
           <p className="font-display font-medium text-sm sm:text-base md:text-lg text-white/50 leading-[1.7] tracking-[0.04em] uppercase">
@@ -147,7 +157,7 @@ export default function Hero() {
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.3, ease: EASE }}
+          transition={{ duration: isMobile ? 0.5 : 0.7, delay: isMobile ? 0.35 : 1.3, ease: EASE }}
           className="font-display text-xs sm:text-sm md:text-base text-white/40 tracking-wide mb-10 md:mb-14"
         >
           AI Agents &nbsp;&middot;&nbsp; Premium Websites &nbsp;&middot;&nbsp; Custom Workflows
@@ -156,7 +166,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.6, ease: EASE }}
+          transition={{ duration: isMobile ? 0.5 : 0.7, delay: isMobile ? 0.45 : 1.6, ease: EASE }}
         >
           <MagneticButton>
             <a
@@ -175,23 +185,6 @@ export default function Hero() {
           </MagneticButton>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 2.5 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-        >
-          <div className="flex flex-col items-center gap-3">
-            <span className="font-display text-[9px] tracking-[0.4em] text-white/20 uppercase">
-              Scroll
-            </span>
-            <motion.div
-              animate={{ y: [0, 6, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-px h-6 bg-gradient-to-b from-white/30 to-transparent"
-            />
-          </div>
-        </motion.div>
       </div>
     </section>
   );
