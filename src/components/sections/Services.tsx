@@ -7,11 +7,11 @@ import { EASE_CINEMATIC } from "@/lib/animations";
 const services = [
   {
     num: "01",
-    title: "Premium Websites",
-    subtitle: "SEO, AEO & GEO Optimised",
+    title: "Agentic Orchestration",
+    subtitle: "Multi-Agent Systems · Reasoning Pipelines",
     description:
-      "Websites that rank, convert, and dominate — built for the AI search era. Not templates. Engineered digital experiences.",
-    image: "https://placehold.co/900x1100/1a1040/818CF8?text=WEB%0ADESIGN&font=montserrat",
+      "Design and deploy autonomous multi-agent systems that reason, plan, and execute across your entire stack. Not simple bots — orchestrated intelligence.",
+    image: "https://placehold.co/900x1100/1a1040/818CF8?text=AGENTIC%0AORCH&font=montserrat",
     overlayColor: "rgba(99,102,241,0.08)",
     glowColor: "rgba(99,102,241,0.15)",
   },

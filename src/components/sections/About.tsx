@@ -122,20 +122,25 @@ export default function About() {
             <div className="space-y-6 font-display text-base text-white/50 leading-[1.8]">
               <p>
                 Serial AI builder. 2nd-time founder. 5+ years deep in AI &amp;
-                agentic automation.
+                agentic automation — from LLM fine-tuning and RAG pipelines to
+                production-grade multi-agent orchestration.
               </p>
               <p>
-                Previously Co-founded a{" "}
-                <span className="text-white/80 font-medium">B2B AI tech SaaS startup</span> where
-                he launched 3 paying products and led the company to a{" "}
+                Crossed{" "}
                 <span className="text-cyan-400 font-medium">
-                  6-figure USD exit
+                  6-figure sales in the first year of operating
                 </span>{" "}
-                as a white-labeled solution.
+                — shipping AI agents, automation systems, and end-to-end
+                agentic workflows for clients across the US, UK, and India.
+                Previously co-founded a{" "}
+                <span className="text-white/80 font-medium">B2B AI SaaS startup</span>,
+                launched 3 paying products, and built deep expertise across the full
+                AI stack — from model selection and prompt engineering to
+                deployment infrastructure and observability.
               </p>
               <p>
-                Now building Zoeta AI to help businesses deploy AI systems that
-                actually move the needle.
+                Now building Zoeta AI to be the studio businesses call when they
+                need AI systems that ship fast, scale hard, and deliver real ROI.
               </p>
             </div>
 
@@ -143,8 +148,8 @@ export default function About() {
             <div className="grid grid-cols-3 gap-4 sm:gap-6 mt-10 sm:mt-12 pt-8 border-t border-white/10">
               {[
                 { value: "5+", label: "Years in AI" },
-                { value: "$100K+", label: "Lifetime Sales" },
-                { value: "2x", label: "Founder" },
+                { value: "$100K+", label: "Sales in Year 1" },
+                { value: "20+", label: "AI Systems Shipped" },
               ].map((stat) => (
                 <div key={stat.label}>
                   <p className="font-display font-bold text-xl sm:text-2xl md:text-3xl text-gradient-cyan tracking-[-0.02em]">

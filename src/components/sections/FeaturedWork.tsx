@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef } from "react";
+import Link from "next/link";
 import { motion, useInView } from "framer-motion";
 import { fadeInUp, staggerContainer, EASE_CINEMATIC } from "@/lib/animations";
 
 const projects = [
   {
+    slug: "size",
     client: "SIZE",
     url: "size.co.uk",
     description:
@@ -18,6 +20,7 @@ const projects = [
     metricLabel: "Reduction in manual tagging",
   },
   {
+    slug: "gymbox",
     client: "Gymbox",
     url: "gymbox.com",
     description:
@@ -30,6 +33,7 @@ const projects = [
     metricLabel: "Member engagement increase",
   },
   {
+    slug: "rumble-boxing",
     client: "Rumble Boxing",
     url: "rumbleboxing.com",
     description:
@@ -42,6 +46,7 @@ const projects = [
     metricLabel: "Qualified leads generated",
   },
   {
+    slug: "hair-and-co-bklyn",
     client: "Hair and Co Bklyn",
     url: "hairandcobklyn.com",
     description:
@@ -94,72 +99,74 @@ export default function FeaturedWork() {
           className="space-y-6"
         >
           {projects.map((project) => (
-            <motion.div
-              key={project.client}
-              variants={fadeInUp}
-              className="group relative rounded-2xl overflow-hidden glass-card hover:border-cyan/20 transition-colors duration-500"
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
-                {/* Left: Image + metric */}
-                <div className="lg:col-span-4 relative overflow-hidden">
-                  <div className="aspect-[3/2] lg:aspect-auto lg:h-full">
-                    <img
-                      src={project.image}
-                      alt={project.client}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                    <div className="absolute bottom-4 left-4">
-                      <span className="font-display font-bold text-3xl md:text-4xl text-white tracking-[-0.03em]">
-                        {project.metric}
+            <Link key={project.client} href={`/work/${project.slug}`} className="block">
+              <motion.div
+                variants={fadeInUp}
+                className="group relative rounded-2xl overflow-hidden glass-card hover:border-cyan/20 transition-colors duration-500"
+              >
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
+                  {/* Left: Image + metric */}
+                  <div className="lg:col-span-4 relative overflow-hidden">
+                    <div className="aspect-[3/2] lg:aspect-auto lg:h-full">
+                      <img
+                        src={project.image}
+                        alt={project.client}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                      <div className="absolute bottom-4 left-4">
+                        <span className="font-display font-bold text-3xl md:text-4xl text-white tracking-[-0.03em]">
+                          {project.metric}
+                        </span>
+                        <p className="font-mono text-[10px] text-white/60 mt-1 tracking-wider uppercase">
+                          {project.metricLabel}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Content */}
+                  <div className="lg:col-span-8 p-6 sm:p-8 md:p-10 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 mb-4">
+                      <h3 className="font-display font-bold text-xl md:text-2xl tracking-[-0.02em] text-white">
+                        {project.client}
+                      </h3>
+                      <span className="font-mono text-[10px] text-white/30 tracking-wider">
+                        {project.url}
                       </span>
-                      <p className="font-mono text-[10px] text-white/60 mt-1 tracking-wider uppercase">
-                        {project.metricLabel}
-                      </p>
+                    </div>
+
+                    <p className="font-display text-base text-white/60 leading-[1.7] mb-3">
+                      {project.description}
+                    </p>
+
+                    <p className="font-display text-sm text-white/35 leading-[1.7] mb-6">
+                      {project.result}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="font-mono text-[10px] px-3 py-1.5 rounded-full bg-white/5 border border-white/8 text-cyan-400/70 tracking-wider
+                            group-hover:bg-cyan/10 group-hover:border-cyan/20 group-hover:text-cyan-400 transition-colors duration-500"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+
+                      <div className="ml-auto flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <span className="font-mono text-[10px] text-cyan-400/60 tracking-wider uppercase">View Case Study</span>
+                        <svg className="w-5 h-5 text-cyan-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
                 </div>
-
-                {/* Right: Content */}
-                <div className="lg:col-span-8 p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                  <div className="flex items-center gap-3 mb-4">
-                    <h3 className="font-display font-bold text-xl md:text-2xl tracking-[-0.02em] text-white">
-                      {project.client}
-                    </h3>
-                    <span className="font-mono text-[10px] text-white/30 tracking-wider">
-                      {project.url}
-                    </span>
-                  </div>
-
-                  <p className="font-display text-base text-white/60 leading-[1.7] mb-3">
-                    {project.description}
-                  </p>
-
-                  <p className="font-display text-sm text-white/35 leading-[1.7] mb-6">
-                    {project.result}
-                  </p>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="font-mono text-[10px] px-3 py-1.5 rounded-full bg-white/5 border border-white/8 text-cyan-400/70 tracking-wider
-                          group-hover:bg-cyan/10 group-hover:border-cyan/20 group-hover:text-cyan-400 transition-colors duration-500"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-
-                    <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      <svg className="w-5 h-5 text-cyan-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </motion.div>
       </div>
