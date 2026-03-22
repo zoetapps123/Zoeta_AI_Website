@@ -3,7 +3,9 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
+import { animate, createTimeline, stagger, random } from "animejs";
 import MagneticButton from "@/components/animations/MagneticButton";
+import { useAnimeMorphBlob } from "@/lib/useAnime";
 
 const ParticleCanvas = dynamic(() => import("./HeroParticles"), {
   ssr: false,
@@ -20,11 +22,36 @@ function useIsMobile() {
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
+/** Splits text into individual letter spans for anime.js targeting */
+function SplitText({ text, className }: { text: string; className?: string }) {
+  return (
+    <>
+      {text.split("").map((char, i) => (
+        <span
+          key={i}
+          className={`anime-hero-letter inline-block ${className ?? ""}`}
+          style={{ opacity: 0 }}
+        >
+          {char}
+        </span>
+      ))}
+    </>
+  );
+}
+
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
   const [glitch, setGlitch] = useState(false);
   const [glitchOffset, setGlitchOffset] = useState({ x: 0, y: 0 });
+  const lineRef = useRef<HTMLDivElement>(null);
+  const subtitleRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  // Morphing blobs
+  const blob1 = useAnimeMorphBlob();
+  const blob2 = useAnimeMorphBlob();
 
   const triggerGlitch = useCallback(() => {
     setGlitch(true);
@@ -49,6 +76,119 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [triggerGlitch]);
 
+  // Master anime.js entrance timeline
+  useEffect(() => {
+    const tl = createTimeline({
+      defaults: { ease: "outExpo" },
+    });
+
+    // 1. Letters cascade in with wave
+    tl.add(".anime-hero-letter", {
+      opacity: [0, 1],
+      translateY: [80, 0],
+      rotateX: [90, 0],
+      scale: [0.5, 1],
+      duration: 1200,
+      delay: stagger(60, { start: 300 }),
+    });
+
+    // 2. Decorative line draws in
+    tl.add(lineRef.current!, {
+      scaleX: [0, 1],
+      opacity: [0, 1],
+      duration: 800,
+    }, "-=600");
+
+    // 3. Subtitle slides up
+    tl.add(subtitleRef.current!, {
+      opacity: [0, 1],
+      translateY: [30, 0],
+      duration: 800,
+    }, "-=400");
+
+    // 4. Services text
+    tl.add(".anime-service-dot", {
+      opacity: [0, 1],
+      scale: [0, 1],
+      duration: 500,
+      delay: stagger(100),
+    }, "-=400");
+
+    tl.add(servicesRef.current!, {
+      opacity: [0, 1],
+      translateY: [20, 0],
+      duration: 600,
+    }, "-=500");
+
+    // 5. CTA button rises up
+    tl.add(ctaRef.current!, {
+      opacity: [0, 1],
+      translateY: [30, 0],
+      scale: [0.9, 1],
+      duration: 800,
+    }, "-=300");
+
+    // 6. Background orbs pulse in
+    tl.add(".anime-orb", {
+      opacity: [0, 1],
+      scale: [0.3, 1],
+      duration: 2000,
+      delay: stagger(200),
+      ease: "outSine",
+    }, "-=1200");
+
+    // 7. Grid lines fade in
+    tl.add(".anime-grid", {
+      opacity: [0, 0.03],
+      duration: 1500,
+    }, "-=1500");
+
+    return () => { tl.pause(); };
+  }, []);
+
+  // Floating particles around the title
+  useEffect(() => {
+    if (isMobile) return;
+    const container = sectionRef.current;
+    if (!container) return;
+
+    const particles: HTMLDivElement[] = [];
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement("div");
+      p.className = "anime-floating-particle";
+      p.style.cssText = `
+        position: absolute;
+        width: ${2 + Math.random() * 4}px;
+        height: ${2 + Math.random() * 4}px;
+        background: rgba(129, 140, 248, ${0.2 + Math.random() * 0.4});
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 15;
+        left: ${10 + Math.random() * 80}%;
+        top: ${10 + Math.random() * 80}%;
+      `;
+      container.appendChild(p);
+      particles.push(p);
+    }
+
+    const anim = animate(particles, {
+      translateX: () => random(-100, 100),
+      translateY: () => random(-100, 100),
+      opacity: [0.8, 0.1],
+      scale: [1.5, 0.5],
+      duration: 4000,
+      delay: stagger(200),
+      loop: true,
+      alternate: true,
+      ease: "inOutSine",
+    });
+
+    return () => {
+      anim.pause();
+      particles.forEach((p) => p.remove());
+    };
+  }, [isMobile]);
+
   return (
     <section
       ref={sectionRef}
@@ -57,19 +197,28 @@ export default function Hero() {
     >
       {!isMobile && <ParticleCanvas />}
 
-      {/* Colorful gradient orbs — reduced blur on mobile for GPU performance */}
-      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-600/20 blur-[60px] md:blur-[120px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-purple-600/15 blur-[60px] md:blur-[120px]" />
-      <div className="absolute top-[30%] right-[10%] w-[300px] h-[300px] rounded-full bg-pink-500/10 blur-[50px] md:blur-[100px]" />
-      <div className="absolute bottom-[20%] left-[15%] w-[250px] h-[250px] rounded-full bg-orange-500/8 blur-[40px] md:blur-[80px]" />
+      {/* Morphing gradient orbs */}
+      <div
+        ref={blob1}
+        className="anime-orb absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-600/20 blur-[60px] md:blur-[120px]"
+        style={{ opacity: 0 }}
+      />
+      <div
+        ref={blob2}
+        className="anime-orb absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-600/15 blur-[60px] md:blur-[120px]"
+        style={{ opacity: 0 }}
+      />
+      <div className="anime-orb absolute top-[30%] right-[10%] w-[300px] h-[300px] rounded-full bg-pink-500/10 blur-[50px] md:blur-[100px]" style={{ opacity: 0 }} />
+      <div className="anime-orb absolute bottom-[20%] left-[15%] w-[250px] h-[250px] rounded-full bg-orange-500/8 blur-[40px] md:blur-[80px]" style={{ opacity: 0 }} />
 
       {/* Subtle vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(11,15,25,0.5)_70%)] z-10" />
 
       {/* Grid lines */}
-      <div className="absolute inset-0 z-10 opacity-[0.03]" style={{
+      <div className="anime-grid absolute inset-0 z-10" style={{
         backgroundImage: "linear-gradient(rgba(99,102,241,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.3) 1px, transparent 1px)",
         backgroundSize: "80px 80px",
+        opacity: 0,
       }} />
 
       <div className="relative z-20 text-center w-full px-6">
@@ -82,20 +231,14 @@ export default function Hero() {
           Agentic Automation Studio
         </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: isMobile ? 0.6 : 1.2, delay: isMobile ? 0.15 : 0.5, ease: EASE }}
-          className="relative mb-8 md:mb-14"
-          onClick={triggerGlitch}
-        >
+        <div className="relative mb-8 md:mb-14" onClick={triggerGlitch}>
           <h1
             className="font-display font-bold leading-none select-none relative inline-block text-white"
-            style={{ fontSize: "clamp(3.5rem, 18vw, 16rem)", letterSpacing: "-0.04em" }}
+            style={{ fontSize: "clamp(3.5rem, 18vw, 16rem)", letterSpacing: "-0.04em", perspective: "1000px" }}
           >
             <span className="relative z-10">
-              ZOETA
-              <span className="text-gradient-cyan">.</span>
+              <SplitText text="ZOETA" />
+              <span className="anime-hero-letter inline-block text-gradient-cyan" style={{ opacity: 0 }}>.</span>
             </span>
 
             {glitch && (
@@ -134,40 +277,34 @@ export default function Hero() {
             </span>
           </h1>
 
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 1, delay: 1.2, ease: EASE }}
+          <div
+            ref={lineRef}
             className="w-24 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent mx-auto mt-6"
+            style={{ opacity: 0, transformOrigin: "center" }}
           />
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: isMobile ? 0.5 : 0.8, delay: isMobile ? 0.25 : 1.0, ease: EASE }}
-          className="max-w-xl mx-auto mb-6"
-        >
+        <div ref={subtitleRef} className="max-w-xl mx-auto mb-6" style={{ opacity: 0 }}>
           <p className="font-display font-medium text-sm sm:text-base md:text-lg text-white/50 leading-[1.7] tracking-[0.04em] uppercase">
             AI that ships.{" "}
             <span className="text-gradient-cyan font-semibold">Results that compound.</span>
           </p>
-        </motion.div>
+        </div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: isMobile ? 0.5 : 0.7, delay: isMobile ? 0.35 : 1.3, ease: EASE }}
+        <p
+          ref={servicesRef}
           className="font-display text-xs sm:text-sm md:text-base text-white/40 tracking-wide mb-10 md:mb-14"
+          style={{ opacity: 0 }}
         >
-          AI Agents &nbsp;&middot;&nbsp; Premium Websites &nbsp;&middot;&nbsp; Custom Workflows
-        </motion.p>
+          <span className="anime-service-dot inline-block w-1.5 h-1.5 rounded-full bg-cyan-400/60 mr-2 align-middle" />
+          AI Agents
+          <span className="anime-service-dot inline-block w-1 h-1 rounded-full bg-white/20 mx-3 align-middle" />
+          Premium Websites
+          <span className="anime-service-dot inline-block w-1 h-1 rounded-full bg-white/20 mx-3 align-middle" />
+          Custom Workflows
+        </p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: isMobile ? 0.5 : 0.7, delay: isMobile ? 0.45 : 1.6, ease: EASE }}
-        >
+        <div ref={ctaRef} style={{ opacity: 0 }}>
           <MagneticButton>
             <a
               href="#contact"
@@ -178,13 +315,12 @@ export default function Hero() {
                 active:scale-[0.97] transition-shadow duration-500 animate-glow-pulse"
             >
               <span>Start a Project</span>
-              <svg className="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-transform transition-opacity duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <svg className="w-4 h-4 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </a>
           </MagneticButton>
-        </motion.div>
-
+        </div>
       </div>
     </section>
   );

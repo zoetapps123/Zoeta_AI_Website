@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
+import { animate, stagger, createTimeline } from "animejs";
+import { useAnimeTextScramble } from "@/lib/useAnime";
 
 const EASE_CINEMATIC: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -395,12 +397,304 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+/** Animated approach step with anime.js number reveal */
+function ApproachStep({ step, index }: { step: { title: string; detail: string }; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { ref: numRef, display: numDisplay } = useAnimeTextScramble(
+    String(index + 1).padStart(2, "0"),
+    { delay: index * 100 }
+  );
+
+  // Line drawing animation
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const line = ref.current?.querySelector(".anime-step-line");
+          if (line) {
+            animate(line, {
+              scaleX: [0, 1],
+              opacity: [0, 0.1],
+              duration: 800,
+              delay: 300 + index * 100,
+              ease: "outExpo",
+            });
+          }
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [index]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{
+        duration: 0.5,
+        delay: index * 0.1,
+        ease: EASE_CINEMATIC,
+      }}
+      className="grid grid-cols-1 md:grid-cols-12 gap-6 group relative"
+    >
+      <div className="md:col-span-1">
+        <span
+          ref={numRef as React.RefObject<HTMLSpanElement>}
+          className="font-mono text-[11px] text-cyan-400/40 tracking-wider"
+        >
+          {numDisplay || String(index + 1).padStart(2, "0")}
+        </span>
+      </div>
+      <div className="md:col-span-3">
+        <h3 className="font-display font-semibold text-lg text-white/80">
+          {step.title}
+        </h3>
+      </div>
+      <div className="md:col-span-8">
+        <p className="font-display text-base text-white/45 leading-[1.8]">
+          {step.detail}
+        </p>
+      </div>
+      {/* Subtle bottom line */}
+      <div
+        className="anime-step-line absolute bottom-0 left-0 right-0 h-px bg-white"
+        style={{ transformOrigin: "left", opacity: 0 }}
+      />
+    </motion.div>
+  );
+}
+
+/** Animated result card with stat pop-in */
+function ResultCard({ result, index }: { result: { stat: string; label: string; detail: string }; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Stat pop-in
+          const stat = ref.current?.querySelector(".anime-result-stat");
+          if (stat) {
+            animate(stat, {
+              scale: [0.3, 1.1, 1],
+              opacity: [0, 1],
+              duration: 800,
+              delay: 200 + index * 150,
+              ease: "out(3)",
+            });
+          }
+          // Card border glow
+          if (ref.current) {
+            animate(ref.current, {
+              borderColor: [
+                "rgba(255,255,255,0.08)",
+                "rgba(129,140,248,0.2)",
+                "rgba(255,255,255,0.08)",
+              ],
+              duration: 2000,
+              delay: 400 + index * 150,
+              ease: "inOutSine",
+          });
+          }
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [index]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{
+        duration: 0.5,
+        delay: index * 0.1,
+        ease: EASE_CINEMATIC,
+      }}
+      className="glass-card rounded-2xl p-8"
+    >
+      <p className="anime-result-stat font-display font-bold text-4xl md:text-5xl text-gradient-cyan tracking-[-0.03em] mb-2" style={{ opacity: 0 }}>
+        {result.stat}
+      </p>
+      <p className="font-mono text-[10px] text-cyan-400/50 tracking-wider uppercase mb-4">
+        {result.label}
+      </p>
+      <p className="font-display text-sm text-white/40 leading-[1.7]">
+        {result.detail}
+      </p>
+    </motion.div>
+  );
+}
+
+/** Animated timeline with sequential dot pulses */
+function TimelineItem({ item, index }: { item: { week: string; milestone: string }; index: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const dot = ref.current?.querySelector(".anime-timeline-dot");
+          if (dot) {
+            animate(dot, {
+              scale: [0, 1.5, 1],
+              opacity: [0, 1],
+              backgroundColor: ["rgba(129,140,248,0)", "rgba(129,140,248,0.6)", "rgba(129,140,248,0.4)"],
+              duration: 600,
+              delay: index * 120,
+              ease: "out(3)",
+            });
+          }
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [index]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{
+        duration: 0.4,
+        delay: index * 0.08,
+        ease: EASE_CINEMATIC,
+      }}
+      className="flex items-start gap-6 py-5 border-b border-white/5 last:border-0"
+    >
+      <div className="flex items-center gap-3 min-w-[120px]">
+        <div className="anime-timeline-dot w-2 h-2 rounded-full bg-cyan-400/40" style={{ opacity: 0 }} />
+        <span className="font-mono text-[11px] text-cyan-400/50 tracking-wider">
+          {item.week}
+        </span>
+      </div>
+      <p className="font-display text-base text-white/60">
+        {item.milestone}
+      </p>
+    </motion.div>
+  );
+}
+
 export default function CaseStudyPage() {
   const params = useParams();
   const slug = params.slug as string;
   const study = caseStudies[slug];
   const heroRef = useRef<HTMLElement>(null);
   const heroInView = useInView(heroRef, { once: true });
+  const techRef = useRef<HTMLDivElement>(null);
+  const quoteRef = useRef<HTMLElement>(null);
+
+  // Hero entrance timeline
+  useEffect(() => {
+    if (!heroInView || !heroRef.current) return;
+
+    const tl = createTimeline({ defaults: { ease: "outExpo" } });
+
+    tl.add(heroRef.current.querySelectorAll(".anime-hero-item"), {
+      opacity: [0, 1],
+      translateY: [30, 0],
+      duration: 800,
+      delay: stagger(100),
+    });
+
+    // Quick stats pop
+    tl.add(heroRef.current.querySelectorAll(".anime-quick-stat"), {
+      opacity: [0, 1],
+      scale: [0.8, 1],
+      duration: 600,
+      delay: stagger(80),
+      ease: "out(3)",
+    }, "-=400");
+
+    // Stats border
+    const statsLine = heroRef.current.querySelector(".anime-stats-line");
+    if (statsLine) {
+      tl.add(statsLine, {
+        scaleX: [0, 1],
+        opacity: [0, 1],
+        duration: 800,
+      }, "-=800");
+    }
+  }, [heroInView]);
+
+  // Tech stack cascade
+  useEffect(() => {
+    if (!techRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const techTags = techRef.current?.querySelectorAll(".anime-tech-tag");
+          if (techTags) {
+          animate(techTags, {
+            opacity: [0, 1],
+            translateY: [15, 0],
+            scale: [0.85, 1],
+            duration: 500,
+            delay: stagger(60),
+            ease: "out(3)",
+          });
+          }
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(techRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Testimonial quote animation
+  useEffect(() => {
+    if (!quoteRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          const quoteItems = quoteRef.current?.querySelectorAll(".anime-quote-item");
+          if (quoteItems) {
+          animate(quoteItems, {
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 800,
+            delay: stagger(150),
+            ease: "outExpo",
+          });
+          }
+          // Quote marks animation
+          const quoteMark = quoteRef.current?.querySelector(".anime-quote-mark");
+          if (quoteMark) {
+            animate(quoteMark, {
+              opacity: [0, 0.1],
+              scale: [0.5, 1],
+              duration: 1000,
+              ease: "outExpo",
+            });
+          }
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    observer.observe(quoteRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   if (!study) {
     return (
@@ -435,14 +729,11 @@ export default function CaseStudyPage() {
         </div>
 
         <div className="relative max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={heroInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, ease: EASE_CINEMATIC }}
-          >
+          <div>
             <Link
               href="/#work"
-              className="inline-flex items-center gap-2 font-mono text-[11px] text-white/40 tracking-wider hover:text-cyan-400 transition-colors mb-10 group"
+              className="anime-hero-item inline-flex items-center gap-2 font-mono text-[11px] text-white/40 tracking-wider hover:text-cyan-400 transition-colors mb-10 group"
+              style={{ opacity: 0 }}
             >
               <svg
                 className="w-4 h-4 group-hover:-translate-x-1 transition-transform"
@@ -460,7 +751,7 @@ export default function CaseStudyPage() {
               BACK TO WORK
             </Link>
 
-            <div className="flex flex-wrap items-center gap-3 mb-6">
+            <div className="anime-hero-item flex flex-wrap items-center gap-3 mb-6" style={{ opacity: 0 }}>
               {study.tags.map((tag) => (
                 <span
                   key={tag}
@@ -471,45 +762,48 @@ export default function CaseStudyPage() {
               ))}
             </div>
 
-            <h1 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-[-0.03em] leading-[1.05] text-white mb-4">
+            <h1 className="anime-hero-item font-display font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl tracking-[-0.03em] leading-[1.05] text-white mb-4" style={{ opacity: 0 }}>
               {study.client}
             </h1>
-            <p className="font-display text-lg md:text-xl text-white/50 max-w-2xl leading-[1.7] mb-10">
+            <p className="anime-hero-item font-display text-lg md:text-xl text-white/50 max-w-2xl leading-[1.7] mb-10" style={{ opacity: 0 }}>
               {study.headline}
             </p>
 
             {/* Quick stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-8 border-t border-white/10">
-              <div>
-                <p className="font-display font-bold text-2xl md:text-3xl text-gradient-cyan tracking-[-0.02em]">
-                  {study.metric}
-                </p>
-                <p className="font-mono text-[10px] text-white/30 mt-1 tracking-wider uppercase">
-                  {study.metricLabel}
-                </p>
-              </div>
-              <div>
-                <p className="font-display font-bold text-2xl md:text-3xl text-gradient-cyan tracking-[-0.02em]">
-                  {study.duration}
-                </p>
-                <p className="font-mono text-[10px] text-white/30 mt-1 tracking-wider uppercase">
-                  Delivery Time
-                </p>
-              </div>
-              <div>
-                <p className="font-display text-sm text-white/60">{study.industry}</p>
-                <p className="font-mono text-[10px] text-white/30 mt-1 tracking-wider uppercase">
-                  Industry
-                </p>
-              </div>
-              <div>
-                <p className="font-display text-sm text-white/60">{study.url}</p>
-                <p className="font-mono text-[10px] text-white/30 mt-1 tracking-wider uppercase">
-                  Client
-                </p>
+            <div className="relative pt-8">
+              <div className="anime-stats-line absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-white/10 via-cyan-400/20 to-white/10" style={{ transformOrigin: "left", opacity: 0 }} />
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                <div className="anime-quick-stat" style={{ opacity: 0 }}>
+                  <p className="font-display font-bold text-2xl md:text-3xl text-gradient-cyan tracking-[-0.02em]">
+                    {study.metric}
+                  </p>
+                  <p className="font-mono text-[10px] text-white/30 mt-1 tracking-wider uppercase">
+                    {study.metricLabel}
+                  </p>
+                </div>
+                <div className="anime-quick-stat" style={{ opacity: 0 }}>
+                  <p className="font-display font-bold text-2xl md:text-3xl text-gradient-cyan tracking-[-0.02em]">
+                    {study.duration}
+                  </p>
+                  <p className="font-mono text-[10px] text-white/30 mt-1 tracking-wider uppercase">
+                    Delivery Time
+                  </p>
+                </div>
+                <div className="anime-quick-stat" style={{ opacity: 0 }}>
+                  <p className="font-display text-sm text-white/60">{study.industry}</p>
+                  <p className="font-mono text-[10px] text-white/30 mt-1 tracking-wider uppercase">
+                    Industry
+                  </p>
+                </div>
+                <div className="anime-quick-stat" style={{ opacity: 0 }}>
+                  <p className="font-display text-sm text-white/60">{study.url}</p>
+                  <p className="font-mono text-[10px] text-white/30 mt-1 tracking-wider uppercase">
+                    Client
+                  </p>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -547,34 +841,7 @@ export default function CaseStudyPage() {
 
           <div className="space-y-8">
             {study.approach.map((step, i) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  duration: 0.5,
-                  delay: i * 0.1,
-                  ease: EASE_CINEMATIC,
-                }}
-                className="grid grid-cols-1 md:grid-cols-12 gap-6 group"
-              >
-                <div className="md:col-span-1">
-                  <span className="font-mono text-[11px] text-cyan-400/40 tracking-wider">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <div className="md:col-span-3">
-                  <h3 className="font-display font-semibold text-lg text-white/80">
-                    {step.title}
-                  </h3>
-                </div>
-                <div className="md:col-span-8">
-                  <p className="font-display text-base text-white/45 leading-[1.8]">
-                    {step.detail}
-                  </p>
-                </div>
-              </motion.div>
+              <ApproachStep key={step.title} step={step} index={i} />
             ))}
           </div>
         </div>
@@ -594,28 +861,7 @@ export default function CaseStudyPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {study.results.map((result, i) => (
-              <motion.div
-                key={result.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  duration: 0.5,
-                  delay: i * 0.1,
-                  ease: EASE_CINEMATIC,
-                }}
-                className="glass-card rounded-2xl p-8"
-              >
-                <p className="font-display font-bold text-4xl md:text-5xl text-gradient-cyan tracking-[-0.03em] mb-2">
-                  {result.stat}
-                </p>
-                <p className="font-mono text-[10px] text-cyan-400/50 tracking-wider uppercase mb-4">
-                  {result.label}
-                </p>
-                <p className="font-display text-sm text-white/40 leading-[1.7]">
-                  {result.detail}
-                </p>
-              </motion.div>
+              <ResultCard key={result.label} result={result} index={i} />
             ))}
           </div>
         </div>
@@ -635,28 +881,7 @@ export default function CaseStudyPage() {
 
           <div className="space-y-0">
             {study.timeline.map((item, i) => (
-              <motion.div
-                key={item.week}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  duration: 0.4,
-                  delay: i * 0.08,
-                  ease: EASE_CINEMATIC,
-                }}
-                className="flex items-start gap-6 py-5 border-b border-white/5 last:border-0"
-              >
-                <div className="flex items-center gap-3 min-w-[120px]">
-                  <div className="w-2 h-2 rounded-full bg-cyan-400/40" />
-                  <span className="font-mono text-[11px] text-cyan-400/50 tracking-wider">
-                    {item.week}
-                  </span>
-                </div>
-                <p className="font-display text-base text-white/60">
-                  {item.milestone}
-                </p>
-              </motion.div>
+              <TimelineItem key={item.week} item={item} index={i} />
             ))}
           </div>
         </div>
@@ -668,13 +893,17 @@ export default function CaseStudyPage() {
           <div className="max-w-5xl mx-auto px-6 md:px-12 lg:px-24">
             <div className="w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
           </div>
-          <section className="px-6 md:px-12 lg:px-24 py-20">
-            <div className="max-w-5xl mx-auto">
+          <section ref={quoteRef} className="px-6 md:px-12 lg:px-24 py-20">
+            <div className="max-w-5xl mx-auto relative">
+              {/* Large decorative quote mark */}
+              <div className="anime-quote-mark absolute -top-4 -left-4 font-display text-[120px] leading-none text-cyan-400 pointer-events-none select-none" style={{ opacity: 0 }}>
+                &ldquo;
+              </div>
               <SectionLabel>Client Feedback</SectionLabel>
-              <blockquote className="font-display text-xl md:text-2xl lg:text-3xl text-white/70 leading-[1.5] tracking-[-0.01em] mb-8 max-w-3xl">
+              <blockquote className="anime-quote-item font-display text-xl md:text-2xl lg:text-3xl text-white/70 leading-[1.5] tracking-[-0.01em] mb-8 max-w-3xl" style={{ opacity: 0 }}>
                 &ldquo;{study.testimonial.quote}&rdquo;
               </blockquote>
-              <div>
+              <div className="anime-quote-item" style={{ opacity: 0 }}>
                 <p className="font-display text-sm text-white/60 font-medium">
                   {study.testimonial.name}
                 </p>
@@ -695,11 +924,12 @@ export default function CaseStudyPage() {
       <section className="px-6 md:px-12 lg:px-24 py-20">
         <div className="max-w-5xl mx-auto">
           <SectionLabel>Tech Stack</SectionLabel>
-          <div className="flex flex-wrap gap-3">
+          <div ref={techRef} className="flex flex-wrap gap-3">
             {study.techStack.map((tech) => (
               <span
                 key={tech}
-                className="font-mono text-[11px] px-4 py-2 rounded-lg bg-white/5 border border-white/8 text-white/50 tracking-wider"
+                className="anime-tech-tag font-mono text-[11px] px-4 py-2 rounded-lg bg-white/5 border border-white/8 text-white/50 tracking-wider"
+                style={{ opacity: 0 }}
               >
                 {tech}
               </span>
@@ -722,7 +952,7 @@ export default function CaseStudyPage() {
               href="/#contact"
               className="inline-flex items-center gap-2 font-display text-sm font-medium px-8 py-3.5 rounded-xl
                 bg-gradient-to-r from-indigo-500 to-purple-500 text-white
-                hover:from-indigo-400 hover:to-purple-400 transition-all duration-300
+                hover:from-indigo-400 hover:to-purple-400 transition-colors duration-300
                 shadow-lg shadow-indigo-500/20"
             >
               Get in Touch
